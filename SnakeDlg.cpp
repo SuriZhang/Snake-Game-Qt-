@@ -20,14 +20,14 @@ SnakeDlg::~SnakeDlg()
     delete ui;
 }
 
-// 显示事件处理
+// show event
 void SnakeDlg::showEvent (QShowEvent*) {
     initGame ();
     m_labFood = makeFood ();
     m_tmrCrawl.start (250);
 }
 
-// 绘制事件处理
+// paint event
 void SnakeDlg::paintEvent (QPaintEvent*) {
     if (! m_imgAction.isNull ()) {
         QPainter painter (this);
@@ -45,7 +45,7 @@ void SnakeDlg::paintEvent (QPaintEvent*) {
     }
 }
 
-// 键盘事件处理
+// key press event
 void SnakeDlg::keyPressEvent (QKeyEvent* event) {
     switch (event->key ()) {
         case Qt::Key_Up:
@@ -74,7 +74,7 @@ void SnakeDlg::keyPressEvent (QKeyEvent* event) {
     }
 }
 
-// 初始化游戏
+// initialize the game
 void SnakeDlg::initGame (void) {
     foreach (QLabel* labNode, m_lstSnake)
         delete labNode;
@@ -88,22 +88,22 @@ void SnakeDlg::initGame (void) {
     updateScoreboard ();
 }
 
-// 制造食物
+// make food
 QLabel* SnakeDlg::makeFood (int x /* = -1 */,
     int y /* = -1 */) {
     QPoint ptFood (x, y);
 
     if (x == -1 && y == -1) {
-        // 在活动区内随机生成食物的位置
+        // create food position randomly within active area
         QRect rcAction = ui->m_frmAction->frameRect ();
         ptFood.setX (round (rand (rcAction.left (),
             rcAction.right () - s_nStep), s_nStep));
         ptFood.setY (round (rand (rcAction.top (),
             rcAction.bottom () - s_nStep), s_nStep));
 
-        // 若位置无效...
+        // if the postision is invalid
         if (! validPos (ptFood))
-            // 递归，重新生成
+            // recursively recreate food
             return makeFood ();
     }
 
@@ -120,17 +120,17 @@ QLabel* SnakeDlg::makeFood (int x /* = -1 */,
     return labFood;
 }
 
-// 生成给定范围内的随机数
+// create random numbers within the given range
 int SnakeDlg::rand (int x, int y) {
     return qrand () % (y - x + 1) + x;
 }
 
-// 对齐圆整
+// round 
 int SnakeDlg::round (int x, int y) {
     return x / y * y;
 }
 
-// 计算下一步
+// calculate the next step
 bool SnakeDlg::nextStep (QPoint& ptStep) const {
     ptStep = m_lstSnake.back ()->pos ();
 
@@ -155,44 +155,44 @@ bool SnakeDlg::nextStep (QPoint& ptStep) const {
     return validPos (ptStep);
 }
 
-// 判断有效位置
+// check if the position is valid
 bool SnakeDlg::validPos (QPoint const& ptPos) const {
-    // 若在活动区外...
+    // if the position is out of the active area
     QRect rcAction = ui->m_frmAction->frameRect ();
     if (! rcAction.contains (ptPos))
-        return false; // 返回无效
+        return false; 
 
-    // 对蛇的每一个节点...
+    // for each node of the snake
     foreach (QLabel* labNode, m_lstSnake)
-        // 若在蛇身上...
+        // if the node is "on" the snake
         if (labNode->pos () == ptPos)
-            return false; // 返回无效
+            return false; 
 
     return true;
 }
 
-// 更新记分板
+// update score board
 void SnakeDlg::updateScoreboard (void) const {
     ui->m_labScoreboard->setText (tr ("得分：") +
         QString::number (m_uScore));
 }
 
-// 爬行定时器到期信号处理
+// crawl expired signal
 void SnakeDlg::crawlExpired (void) {
     QPoint ptStep;
-    // 若下一步是有效位置...
+    // if the next step is valid
     if (nextStep (ptStep))
-        // 若下一步是食物...
+        // if the next step is food
         if (ptStep == m_labFood->pos ()) {
-            // 生长
+            // elongate
             m_lstSnake.push_back (m_labFood);
             m_labFood = makeFood ();
-            // 加分
+            // score updated
             m_uScore += 100;
             updateScoreboard ();
         }
         else {
-            // 爬到下一步
+            // crawl to the next step
             QLabel* labPrev = NULL;
             foreach (QLabel* labNext, m_lstSnake) {
                 if (labPrev)
@@ -201,10 +201,10 @@ void SnakeDlg::crawlExpired (void) {
             }
             labPrev->move (ptStep);
         }
-    else { // 否则...
+    else { // otherwise
         QMessageBox msgBox (QMessageBox::Question,
-            windowTitle (), tr ("小蛇蛇死了，5555~~~~\n"
-            "是否继续？"), QMessageBox::Yes |
+            windowTitle (), tr ("The snake is dead...\n"
+            "Do you want to continue?"), QMessageBox::Yes |
             QMessageBox::No, this);
         if (msgBox.exec () == QMessageBox::Yes)
             initGame ();
