@@ -20,50 +20,50 @@ public:
     ~SnakeDlg();
 
 private:
-    // 显示事件处理
+    // show event
     void showEvent (QShowEvent*);
-    // 绘制事件处理
+    // paint event
     void paintEvent (QPaintEvent*);
-    // 键盘事件处理
+    // key press event
     void keyPressEvent (QKeyEvent* event);
 
-    // 初始化游戏
+    // initialize the game
     void initGame (void);
-    // 制造食物
+    // make food
     QLabel* makeFood (int x = -1, int y = -1);
-    // 生成给定范围内的随机数
+    // create random numbers within given range
     int rand (int x, int y);
-    // 对齐圆整
+    // round 
     int round (int x, int y);
-    // 计算下一步
+    // calculate the next step
     bool nextStep (QPoint& ptStep) const;
-    // 判断有效位置
+    // check if pos valid
     bool validPos (QPoint const& ptPos) const;
-    // 更新记分板
+    // update score board
     void updateScoreboard (void) const;
 
 private slots:
-    // 爬行定时器到期信号处理
+    // crawl expired signal
     void crawlExpired (void);
 
 private:
     Ui::SnakeDlg *ui;
 
-    // 方向
+    // directions
     typedef enum tag_Direction {
-        EDIR_UP,   // 向上
-        EDIR_DOWN, // 向下
-        EDIR_LEFT, // 向左
-        EDIR_RIGHT // 向右
+        EDIR_UP,   // up
+        EDIR_DOWN, // down
+        EDIR_LEFT, // left
+        EDIR_RIGHT // right
     }   EDIR;
 
-    QImage           m_imgAction;  // 活动区图片
-    QList<QLabel*>   m_lstSnake;   // 蛇节点链表
-    QLabel*          m_labFood;    // 食物
-    EDIR             m_eDir;       // 行进方向
-    static const int s_nStep = 20; // 步距
-    QTimer           m_tmrCrawl;   // 爬行定时器
-    unsigned int     m_uScore;     // 得分
+    QImage           m_imgAction;  // background image for active area
+    QList<QLabel*>   m_lstSnake;   // linked list for snake
+    QLabel*          m_labFood;    // food
+    EDIR             m_eDir;       // directions
+    static const int s_nStep = 20; // step len
+    QTimer           m_tmrCrawl;   // crawl timer
+    unsigned int     m_uScore;     // score
 };
 
 #endif // SNAKEDLG_H
